@@ -1,17 +1,18 @@
-## FAQ for GRPLT Lite 
+
+## GRPLT Lite常见问题
 
 
 
-### 1. What is the principle of crystal calibration?
+### 1. 晶体校准原理是什么？
 
--   The GU module starts the PWM at the beginning of the test and sends a specific square wave signal to the IO port corresponding to the DUT, and the DUT calibrates based on the square wave. Currently using a 40 Hz square wave to calculate the count in one cycle at a running rate of 64m, the expected count is:
+-   GU模块在测试开始时启动PWM，向DUT对应的IO口发送特定方波信号，DUT以此方波为基准进行校准。当前采用40 Hz方波，以64M运行速率计算一个周期内的计数，则期望的计数为：
 
     
     $$
     64M \times 1 \div 40 = 1.6M
     $$
 
--   The corresponding card control threshold algorithm is:
+-   对应的卡控阈值算法为：
     
 
     $$
@@ -20,34 +21,34 @@
     
     
     
--   Where N is the desired PPM and X is the count offset (i.e. ErrLimit in the job setup). The default card control threshold of the current work order is 60, and the PPM is 37.5. In principle, the offset value should not exceed 80 (i.e. 50 PPM). When the offset is large, Bluetooth is easily disconnected.
+-   其中N为期望PPM，X为计数偏移（即工单设置中的ErrLimit）。当前工单的默认卡控阈值为60，PPM为37.5。原则上偏移值不应该超过80（即50 PPM）。当偏移较大时，蓝牙很容易断连。
 
-### 2. What is the RSSI test method?
+### 2. RSSI测试方法是什么？
 
--   At the beginning of the test, the GU module will broadcast data as a Slave (the broadcast data value is a random value of 6 bytes to distinguish the broadcast signals of GUs at different stations), and the DUT will SCAN as a Master to obtain the RSSI value. (Neither the GR533x nor the GR5625 support RSSI, and there are no plans to support any future models.)
+-   GU模块在测试开始时会作为Slave进行广播数据（广播数据值为6字节的随机值，以便区分不同工位GU的广播信号），DUT会作为Master进行SCAN，获取RSSI值。（GR533x和GR5625均不支持RSSI，后续新型号均无支持计划。）
 
-### 3. How is custom encryption different from Goodix encryption?
+### 3. 自定义加密与Goodix加密有何不同？
 
--   GOODIX encryption is hardware encryption, which uses the internal encryption module of the Goodix Bluetooth LE to encrypt the Flash and close the SWD. This operation is irreversible. The application firmware also needs to be encrypted to run, which is the automatic encryption of the hardware; Custom encryption is to encrypt some Flash data (such as NVDS data or Flash resource files) according to the information written by eFuse. If the customer wants to stop using encryption, it can be burned again.
+-   GOODIX加密为硬件加密，使用Goodix Bluetooth LE内部加密模块对Flash进行加密，并关闭SWD，此操作不可逆，应用固件也需要加密才能运行，是硬件的自动加密；自定义加密，为客户根据eFuse写入的信息，对某些Flash数据进行软件加密（如NVDS数据或Flash资源文件），若客户想不再使用加密，则重新烧录即可。
 
-### 4. Test Firmware failed to run (0x39), what could be the cause?
+### 4. 测试固件运行失败（0x39），可能是什么原因？
 
-- Check that the work order matches the module. For a DUT without an external 32.768 K crystal, do not use a work order with an external crystal.
-- There is a problem with the SRAM. You can check whether the Flash data is consistent with the test firmware through the Dump Flash.
-- If it is a hardware encryption environment and the DUT has been encrypted, it is possible that the KEY INFO in the DUT does not match the key of the test firmware and cannot be decrypted successfully.
+- 检查工单与模组是否匹配，不带外部32.768K晶体的DUT，不可使用带外部晶体的工单。
+- SRAM有问题，可通过Dump Flash查看Flash数据是否与测试固件一致。
+- 若为硬件加密环境，且DUT已经加密，则可能是DUT中的KEY INFO与测试固件的密钥不匹配，无法成功解密。
 
-### 5. Test firmware download failed (0x37, 0x38), what could be the cause?
+### 5. 测试固件下载失败（0x37、0x38），可能是什么原因？
 
-- Check whether the Dupont line from PLT-Lite to DUT UART is qualified. The line which is too thin is easy to be interfered.
-- The fixture has interference, which can be checked through the flying line.
-- If the plug-in Flash used is not suitable, it can be excluded by replacing the Flash of other brands.
-- There is interference with the PCBA trace.
+- 检查PLT-Lite到DUT UART的杜邦线是否质量合格，太细的线容易受干扰。
+- 治具存在干扰，可通过飞线进行排查。
+- 使用的外挂Flash不适配，通过替换别品牌的Flash进行排除。
+- PCBA走线存在干扰。
 
-### 6. Crystal calibration exception (0x3A, 0x3B, 0x3C), what could be the cause?
+### 6. 晶体校准异常（0x3A、0x3B、0x3C），可能是什么原因？
 
-- If most modules have this problem, it may be that the calibration port is not selected correctly or there is a problem with the calibration pin. The problem with the calibration pin may be that there is a capacitor on the jig or on the PCBA, which causes the PWM waveform to be inaccurate and the calibration to fail.
-- If individual modules have this problem, it may be that the threshold card is too strict, the crystal oscillator error is too large, etc.
+- 若大多数模组有此问题，则可能是选择的校准口不正确或者是校准脚有问题。校准脚问题可能是治具上有电容，或者是PCBA上有电容，导致PWM波型不准，校准不通过。
+- 若个别模组有此问题，可能是阈值卡太严、晶振误差太大等。
 
-### 7. How to solve the time-consuming problem of port self-starting test?
+### 7. 端口自启动测试耗时长，如何解决？
 
-- The self-start test is fool-proof, which will detect the port status for the second time, and the default time of this interval is 1.5s. If the user wants to speed up, the inspection interval can be shortened according to the field situation.
+- 自启动测试为防呆，会对端口状态进行二次检测，此间隔默认时间为1.5s。若用户希望加快速度，可根据现场情况将检测间隔缩短。

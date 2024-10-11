@@ -1,66 +1,66 @@
-## FAQ for GRPLT
+﻿## GRPLT常见问题
 
 
-### 1. What is the principle of crystal calibration?
-- The GU module starts the PWM at the beginning of the test and sends a specific square wave signal to the IO port corresponding to the DUT, and the DUT calibrates based on the square wave. Currently using a 40 Hz square wave to calculate the count in one cycle at a running rate of 64m, the expected count is:
+### 1. 晶体校准原理是什么？
+- GU模块在测试开始时启动PWM，向DUT对应的IO口发送特定方波信号，DUT以此方波为基准进行校准。当前采用40 Hz方波，以64M运行速率计算一个周期内的计数，则期望的计数为：
   
 $$
 64M \times 1 \div 40 = 1.6M
 $$
 
--   The corresponding card control threshold algorithm is:
+-   对应的卡控阈值算法为：
 
 $$
 N = X \div 1.6
 $$
 
--   Where N is the desired PPM and X is the count offset (i.e. ErrLimit in the job setup). The default card control threshold of the current work order is 60, and the PPM is 37.5. In principle, the offset value should not exceed 80 (i.e. 50 PPM). When the offset is large, Bluetooth is easily disconnected.
+-   其中N为期望PPM，X为计数偏移（即工单设置中的ErrLimit）。当前工单的默认卡控阈值为60，PPM为37.5。原则上偏移值不应该超过80（即50 PPM）。当偏移较大时，蓝牙很容易断连。
 
-### 2. What is the RSSI test method?
+### 2. RSSI测试方法是什么？
 
-- At the beginning of the test, the GU module will broadcast data as a Slave (the broadcast data value is a random value of 6 bytes to distinguish the broadcast signals of GUs at different stations), and the DUT will SCAN as a Master to obtain the RSSI value. (Neither the GR533x nor the GR5625 support RSSI, and there are no plans to support any future models.)
+- GU模块在测试开始时会作为Slave广播数据（广播数据值为6字节的随机值，以便区分不同工位GU的广播信号），DUT会作为Master进行SCAN，获取RSSI值。（GR533x和GR5625均不支持RSSI，后续新型号均无支持计划。）
 
-### 3. Where is the.bin file for the new version of the online tool (after V1.5.0.0.4)?
+### 3. 新版在线工具（V1.5.0.0.4后）.bin文件放哪里？
 
-- The new work order generator will be saved in the memory when opening the.bin file. After saving the work order, all the contents will be saved in the work order, and the work order will be encrypted.
+- 新版工单生成器在打开.bin文件时会保存在内存，保存工单后将所有内容都保存于工单中，并对工单进行加密。
 
-### 4. When do we need secondary development?
+### 4. 什么时候需要二次开发？
 
-- Need to interface with MES or similar system
-- Need to load custom dynamic Flash data
-- Need to dynamically generate Bluetooth addr
-- The SN code needs to be scanned and written to the machine
-- Need to use a specific interface
+- 需要与MES或类似系统对接
+- 需要加载自定义的动态Flash数据
+- 需要动态生成蓝牙地址
+- 需要扫描SN码，并写入机器中
+- 需要使用特定的界面
 
-### 5. How is custom encryption different from Goodix encryption?
+### 5. 自定义加密与Goodix加密有何不同？
 
-- GOODIX encryption is hardware encryption, which uses the internal encryption module of the Goodix Bluetooth LE to encrypt the Flash and close the SWD. This operation is irreversible. The application firmware also needs to be encrypted to run, which is the automatic encryption of the hardware; Custom encryption is to encrypt some Flash data (such as NVDS data or Flash resource files) according to the information written by eFuse. If the customer wants to stop using encryption, it can be burned again.
+- GOODIX加密为硬件加密，使用Goodix Bluetooth LE内部加密模块对Flash进行加密，并关闭SWD，此操作不可逆，应用固件也需要加密才能运行，是硬件的自动加密；自定义加密，为客户根据eFuse写入的信息，对某些Flash数据进行软件加密（如NVDS数据或Flash资源文件），若客户想不再使用加密，则重新烧录即可。
 
-### 6. Report 0x1A badness (test firmware operation failure), what is the possible reason?
-- Check that the work order matches the module. For a DUT without an external 32.768 K crystal, do not use a work order with an external crystal.
-- There is a problem with the SRAM. You can check whether the Flash data is consistent with the test firmware through the Dump Flash.
-- If it is a hardware encryption environment and the DUT has been encrypted, it is possible that the KEY INFO in the DUT does not match the key of the test firmware and cannot be decrypted successfully.
+### 6. 具报0x1A不良（测试固件运行失败），可能是什么原因？
+- 检查工单与模组是否匹配，不带外部32.768K晶体的DUT，不可使用带外部晶体的工单。
+- SRAM有问题，可通过Dump Flash查看Flash数据是否与测试固件一致。
+- 若为硬件加密环境，且DUT已经加密，则可能是DUT中的KEY INFO与测试固件的密钥不匹配，无法成功解密。
 
-### 7. The online tool reports 0xFC fault (test firmware download fails). What is the possible reason?
-- Check whether the Dupont line from PLT to DUT UART is qualified. The line that is too thin is easy to be interfered.
-- The fixture has interference, which can be checked through the flying line.
-- If the plug-in Flash used is not suitable, it can be excluded by replacing the Flash of other brands.
-- There is interference with the PCBA trace.
-- The UART cable from PLT to DUT is too long. The current PLT can stably support a length of 1.5m. Communication beyond this length may be interfered.
+### 7. 在线工具报0xFC不良（测试固件下载失败），可能是什么原因？
+- 检查PLT到DUT UART的杜邦线是否质量合格，太细的线容易受干扰。
+- 治具存在干扰，可通过飞线进行排查。
+- 使用的外挂Flash不适配，通过替换别品牌的Flash进行排除。
+- PCBA走线存在干扰。
+- PLT到DUT的UART连接线太长，当前PLT可稳定支持长度为1.5m，超过此长度通讯或受干扰。
 
-### 8. 0x10 badness (abnormal crystal calibration) is reported. What is the possible reason?
-- If most modules have this problem, it may be that the calibration port is not selected correctly or there is a problem with the calibration pin. The problem with the calibration pin may be that there is a capacitor on the jig or on the PCBA, which causes the PWM waveform to be inaccurate and the calibration to fail.
-- If individual modules have this problem, it may be that the threshold card is too strict, the crystal oscillator error is too large, etc.
+### 8. 报0x10不良（晶体校准异常），可能是什么原因？
+- 若大多数模组有此问题，则可能是选择的校准口不正确或者是校准脚有问题。校准脚问题可能是治具上有电容，或者是PCBA上有电容，导致PWM波型不准，校准不通过。
+- 若个别模组有此问题，可能是阈值卡太严、晶振误差太大等。
 
 
-### 9. Report 0x 12 error (abnormal burning), what is the possible reason?
-- 0x12 is the error code when the burning link is abnormal. See the attached error code for details.
-- 0x15 or 0x16: This is a resource or firmware burning failure. Check the "LoadFW" column in the CSV Log file to see the specific reason for the failure. If it is "Error of Program Start", it is mostly caused by the transfer of external Flash download, and there is a problem with the configured port; if it is "Error of Program Data", this is an error in the process of burning Flash, which can be handled by referring to the problem of firmware download failure; If it is "Error of Program End", this is the final verification error, and contact the original factory personnel to check.
-- There is no other error code attached: Check the "Fail Log" "in the CSV Log to see the specific error content. At present, most of them are" Product _ info Error "". This error indicates that there is a problem with the calibration value and Bluetooth address in eFuse. GRPLT's eFuse interface can be used to read the complete eFuse content for factory analysis.
+### 9. 报0x12错误（烧录异常），可能是什么原因？
+- 0x12是在烧录环节出现异常时均带有此错误码，具体需要看附带的错误码。
+- 0x15或0x16：此为烧录资源或固件失败，查看CSV Log文件中的“LoadFW”列可知具体失败原因。若为“Error of Program Start”，多发生于中转外部Flash下载，配置的端口有问题；若为“Error of Program Data”，此为烧录Flash途中出错，可参考测试固件下载失败问题进行处理；若为“Error of Program End”，此为最后的校验出错，联系原厂人员进行查看。
+- 没有其他附带的错误码：查看CSV Log中的“Fail Log”可知具体错误内容，目前多为“Product_info Error”，出现此错误说明eFuse中的校准值与蓝牙地址有问题，可使用GRPLT的eFuse界面读取完整的eFuse内容给原厂进行分析。
 
-### 10. After starting the GRPLT, when connecting the DUT, clicking "Start" does not respond. What is the possible reason?
-- There is a problem with the design of the DUT, and the DC-DC circuit design does not meet the specifications, resulting in the DUT cannot start normally and cannot be identified.
-- Fixture pin communication is poor, the DUT cannot return the command correctly, and it cannot be recognized.
+### 10. 启动GRPLT后，连接DUT时，点击“Start”无响应，可能是什么原因？
+- DUT设计有问题，DC-DC电路设计不符合规范，导致DUT无法正常启动，无法识别。
+- 治具针脚通讯不良，DUT无法正确返回命令，无法识别。
 
-### 11. After opening GRPLT, 16 small windows are not displayed. What may be the reason?
-- PLT uses FTDI USB to serial port chip, and FTDI should be installed correctly before using PLT [驱动](http://www.ftdichip.cn/Drivers/VCP.htm). After the driver is downloaded, you can check whether it is recognized correctly through the port (COM and LPT) page of the Windows Device Manager. When the installation is successful, 17 or 18 com ports (USB Serial Port) will appear in the list. In case of installation failure, reinstall the driver if all of them cannot be identified; if some of them cannot be identified, right click the com port to manually update the driver.
+### 11. 打开GRPLT后，没有显示16个小窗口，可能是什么原因？
+- PLT使用FTDI的USB转串口芯片，使用PLT前需要正确安装FTDI的[驱动](http://www.ftdichip.cn/Drivers/VCP.htm)。下载驱动完毕后，可通过Windows设备管理器的端口（COM和LPT）页面查看是否正确识别。安装成功时，列表中将出现17或18个COM口（USB Serial Port）。安装失败时，若全部识别不到，则重新安装驱动；若个别识别不到，则可右键点击COM口，手动更新驱动。

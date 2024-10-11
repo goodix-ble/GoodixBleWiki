@@ -1,30 +1,29 @@
-## FAQ for LOG Module
+## APP LOG模块常见问题
 
 
 
-### 1. What is the maximum baud rate of UART for LOG?
+### 1. UART打LOG最高波特率能到多少？
 
--   The maximum baud rate of UART of GR5xx series SoC is 4m, but considering the bit error rate and the ability of converting serial port to USB chip, it is not recommended to use 4m to play LOG. In addition, the maximum baud rate supported by the J-Link OB chip on the GR5xx Starter Kit is only up to the 460800, so if there is a higher requirement for the baud rate, the user needs to connect a serial port to USB board with better performance.
-
-
-
-### 2. What should I do if I can't see the output on the computer when I use the serial port to type LOG?
-
-You can check one by one according to the following steps:
-
-1. Check the configuration of the serial port tool, including **Baud rate**, **Parity check**, **Data bit**, **Stop Bit**, **Flow control**etc., and keep consistent with the configuration when the UART is initialized in the code.
-2. Check the configuration of the _ custom _ config. H _. `APP_LOG_ENABLE` Macros should be `1`. `APP_LOG_PORT` Macros should be `0`.
-3. Check that the APP LOG module and UART are properly initialized. When calling `app_log_init()` a function, the second argument `trans_func` should be the function that outputs using the corresponding UART. Please refer to the implementation `platform\boards\board_SK.c` of SDK or the section of "Module Initialization and Scheduling" in the [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2).
-4. Check whether Pin Mux is configured correctly when UART is initialized. Please refer to the Datasheet of the SoC used for the specific Pin Mux value.
-5. If the DMA mode is used during LOG, check whether the UART DMA configuration is correct and whether the UART used supports DMA (for example, the UART1 of GR551x SoC does not support DMA).
-6. If the problem still cannot be solved after the above five steps, it is recommended to use a logic analyzer or oscilloscope to capture the waveform on the UART TX/RX line to determine whether the GR5xx SoC outputs the correct UART signal. If so, you need to further troubleshoot the problem of serial port to USB or serial port tools. If not, it is recommended to conduct a comparison test with the Example project in the SDK to confirm whether it is a hardware problem or a software problem, and then analyze and troubleshoot the specific problem.
+-   GR5xx系列SoC的UART最大波特率均为4M，但考虑到误码率以及串口转USB芯片的能力，非常不推荐使用4M来打LOG。另外，GR5xx Starter Kit板载的J-Link OB芯片最大支持的波特率只到460800，所以如果对波特率有更高的要求，需要用户外接性能更好的串口转USB板。
 
 
 
-### 3. How to type LOG with SEGGER RTT?
+### 2. 使用串口打LOG在电脑上看不到输出怎么办？
 
-All template projects provided by SDK support LOG via SEGGER RTT. Find `APP_LOG_PORT` the macro in the _ custom _ config. H _ corresponding to the project, and modify the value as `1` :
+可以根据以下步骤逐一进行排查：
 
+1. 检查串口工具的配置，包括**波特率**、**奇偶校验**、**数据位**、**停止位**、**流控**等配置，与代码中初始化UART时的配置保持一致。
+2. 检查_custom_config.h_的配置。`APP_LOG_ENABLE`宏应当为`1`，`APP_LOG_PORT`宏应当为`0`。
+3. 检查APP LOG模块与UART是否正确初始化。在调用`app_log_init()`函数时，第二个参数`trans_func`应当是使用对应UART进行输出的函数。具体写法可参考SDK的实现`platform\boards\board_SK.c`或《[GR5xx APP Log应用说明](https://docs.goodix.com/zh/online/app_log_bl/V3.2)》“模块初始化与调度”章节。
+4. 检查UART初始化时Pin Mux是否正确配置。具体的Pin Mux值请参考所使用SoC的Datasheet。
+5. 如果打LOG时使用了DMA方式，需要检查UART DMA的配置是否正确，以及使用的UART是否支持DMA（例如GR551x SoC的UART1是不支持DMA的）。
+6. 如果经过上述5步仍不能解决问题，则建议使用逻辑分析仪或示波器在UART TX/RX线上抓取波形，来判断GR5xx SoC是否有输出正确的UART信号。如果有，则需要进一步排查串口转USB或串口工具的问题。如果没有，则推荐先用SDK中的Example工程进行对比测试，来确认是硬件问题还是软件问题，然后针对具体问题进行分析排查。
+
+
+
+### 3. 怎么用SEGGER RTT打LOG？
+
+SDK提供的所有模板工程均支持通过SEGGER RTT打LOG。在工程对应的_custom_config.h_中找到`APP_LOG_PORT`宏，将值修改为`1`：
 
 ```c
 // <o> APP log port type
@@ -36,7 +35,7 @@ All template projects provided by SDK support LOG via SEGGER RTT. Find `APP_LOG_
 #endif
 ```
 
-Then recompile and download. When connecting equipment in the J-Link RTT Viewer, **Connection to J-Link**one column is General Select **USB**and **Specify Target Device**the other is Fill **Cortex-M4**, **Target Interface &amp; Speed**Select **SWD**and **4000kHz**, **RTT Control Block**There are two ways to fill in. The first is to find `_SEGGER_RTT` the address of the symbol in the compiled `.map` file, and then use **Address**the option to fill in in RTT Viewer; The second way is to fill in the address range for RTT Viewer to search automatically. Here, it is usually enough to fill in the complete SRAM range. Please refer to the following table for the address range of each SoC:
+然后重新编译下载即可。在J-Link RTT Viewer中连接设备时，**Connection to J-Link**一栏一般选择**USB**，**Specify Target Device**一栏填写**Cortex-M4**，**Target Interface & Speed**选择**SWD**和**4000kHz**，**RTT Control Block**中有两种填写方法，第一种是在编译产生的`.map`中寻找`_SEGGER_RTT`符号的地址，然后在RTT Viewer中使用**Address**选项填写；第二种方式是填写地址范围让RTT Viewer自动搜索，这里通常填写完整的SRAM范围即可。各SoC的地址范围请参考下表：
 
 SoC | Search Range
 -- | ---
@@ -46,52 +45,52 @@ GR5525 | 0x20000000 0x2003FFFF
 GR5526 | 0x20000000 0x2007FFFF
 GR533x | 0x20000000 9x20017FFF
 
-If it is your own project, please refer to the SDK implementation for migration, or refer to the "Module Initialization and Scheduling" section of the [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2).
+如果是自己的工程，请参考SDK的实现进行移植，或参考《[GR5xx APP Log应用说明](https://docs.goodix.com/zh/online/app_log_bl/V3.2)》“模块初始化与调度”章节。
 
 
 
-### 4. Why does RTT print the log for a period of time and then stop printing, and the system is stuck?
+### 4. 为什么RTT打印日志一段时间后就不再打印了，系统也卡死了？
 
-1.  The reason why the log is no longer printed is that the log printing in RTT mode depends on the J-Link connection. When the GR5xx SoC enters the sleep mode, the J-Link connection will be disconnected. The J-Link Link RTT Viewer does not have the automatic reconnection function. When the system wakes up again, the J-link connection has been disconnected. Therefore, the subsequent LOG will not be printed.
-2.  The reason why the system is stuck is likely to be that the RTT printing mode is blocking mode. When the transmission FIFO is full, the RTT will block and wait for the host computer to read the FIFO empty. Combined with the reason described in point 1, the J-Link connection has been disconnected after sleep wake-up, and the upper computer does not continue to read the FIFO. When the FIFO is full, the LOG is set, and the blocking waiting behavior will be stuck.
+1.  不再打印日志的原因是RTT方式打印日志依赖J-Link连接，当GR5xx SoC进入睡眠模式之后，J-Link连接会断开，J-Link RTT Viewer不具备自动重连功能，当系统再次唤醒时，J-Link连接已经断开了，所以表现为不再打印后续LOG。
+2.  系统卡死的原因则很有可能是RTT打印模式为阻塞模式，当传输FIFO满了之后，RTT就会阻塞等待上位机将FIFO读空。结合第1点中描述的原因，睡眠唤醒之后J-Link连接已经断开，上位机没有再继续读取FIFO，当FIFO满了之后再打LOG，阻塞等待的行为就会表现为卡死。
 
-There are two solutions:
+解决办法有2种：
 
-1.  Turn off the low power consumption mode and add it `pwr_mgmt_mode_set(PMR_MGMT_ACTIVE_MODE);` when the system is initialized. Keeping the SoC in the Active state can avoid the disconnection of J-Link connection and avoid the problems of "lost LOG" and "system stuck". The disadvantage is that it can not effectively debug the low power consumption part.
-2.  Change the RTT output mode to non-blocking mode. Use `SEGGER_RTT_ConfigUpBuffer()` the function to modify the output mode when initializing the RTT. There are two non-blocking modes: `SEGGER_RTT_MODE_NO_BLOCK_SKIP` and `SEGGER_RTT_MODE_NO_BLOCK_TRIM`. When the remaining space of the FIFO is not enough to place the complete log to be printed, if it is set to SKIP, the printing will be skipped; if it is set to TRIM, only the FIFO will be filled up, and the excess part will be discarded. Although this method does not affect the low power consumption, it can only avoid that the J-Link connection will not be blocked after disconnection, and it can not avoid the loss of LOG.
-
-
-
-### 5.  What should I do if I can't see the LOG after J-Link RTT Viewer is connected?
-
-You can check one by one according to the following steps:
-
-1. Check the configuration of the _ custom _ config. H _. `APP_LOG_ENABLE` Macros should be `1`. `APP_LOG_PORT` Macros should be `1`.
-
-2. Check that the APP LOG module and RTT are properly initialized. When calling `app_log_init()` a function, the second parameter `trans_func` should be the function that is used `SEGGER_RTT_Write()` for output (but not `SEGGER_RTT_Write()` itself, because the input parameters are different). Please refer to the implementation `platform\boards\board_SK.c` of SDK or the section of "Module Initialization and Scheduling" in the [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2).
-
-3. Check each configuration in the RTT. First check that `_SEGGER_RTT` the variables are placed correctly. It is generally not recommended to place a `_SEGGER_RTT` variable at a fixed address, but if the user chooses to place the variable at a fixed address, you need to ensure that the fixed address exists within the SRAM address range.
-
-4. Check whether the address is set correctly when `RTT Control Block` the J-Link RTT Viewer is connected. The GR5xx SoC does not support **Auto Detection**the mode at present. You need to use the **Address**mode to fill in manually, or use the **Search Range**mode and fill in the address range to let the RTT Viewer search automatically. Please refer to "How to use SEGGER RTT to make LOG?" "For the specific setting method Chapter answers.
-
-5. If the problem still cannot be located and solved after the above four steps, it is necessary to determine whether each link of each LOG is executed correctly and whether the input and return values are in line with expectations through single-step debugging and tracing.
+1.  关闭低功耗模式，在系统初始化时加入`pwr_mgmt_mode_set(PMR_MGMT_ACTIVE_MODE);`，让SoC保持在Active状态可以避免J-Link连接断掉，同时规避“丢LOG”与“系统卡死”的问题，缺点是无法针对低功耗部分进行有效调试。
+2.  将RTT输出模式更改为非阻塞模式，在初始化RTT时使用`SEGGER_RTT_ConfigUpBuffer()`函数来修改输出模式。非阻塞模式分两种：`SEGGER_RTT_MODE_NO_BLOCK_SKIP`和`SEGGER_RTT_MODE_NO_BLOCK_TRIM`。当遇到FIFO剩余空间不足以放下完整的待打印日志，如果设置为SKIP，则跳过该次打印；如果设置为TRIM，则只把FIFO填满，超出的部分全部丢弃。这种方法虽然不影响低功耗，只能避免J-Link连接断开后不会阻塞卡死，并不能避免丢LOG的情况。
 
 
 
-### 6. How to export the stored LOG?
+### 5.  J-Link RTT Viewer连上之后看不到LOG怎么办？
 
--   Use the GRToolbox App on the Android side to export. For specific operations, please refer to [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2)the section "Obtaining Logs".
+可以根据以下步骤逐一进行排查：
+
+1. 检查_custom_config.h_的配置。`APP_LOG_ENABLE`宏应当为`1`，`APP_LOG_PORT`宏应当为`1`。
+
+2. 检查APP LOG模块与RTT是否正确初始化。在调用`app_log_init()`函数时，第二个参数`trans_func`应当是使用`SEGGER_RTT_Write()`进行输出的函数（但不能是`SEGGER_RTT_Write()`本身，因为入参不一样）。具体写法可参考SDK的实现`platform\boards\board_SK.c`或《[GR5xx APP Log应用说明](https://docs.goodix.com/zh/online/app_log_bl/V3.2)》“模块初始化与调度”章节。
+
+3. 检查RTT中的各项配置。首先检查`_SEGGER_RTT`变量是否被正确放置。通常情况下不推荐将`_SEGGER_RTT`变量放置到固定的地址，但如果用户选择了将这个变量放到固定地址，则需要确保这个固定地址存在于SRAM地址范围以内。
+
+4. 检查J-Link RTT Viewer连接时`RTT Control Block`的地址设置是否正确。GR5xx SoC暂不支持**Auto Detection**模式，需要使用**Address**模式手动填入，或者使用**Search Range**模式并填入地址范围让RTT Viewer自动去搜索。具体的设置方法请参考“怎么用SEGGER RTT打LOG？”章节的回答。
+
+5. 如果经过上述4步依然无法定位并解决问题，则需要通过单步调试跟踪来确定每一个打LOG的每一个环节是否都正确执行，入参与返回值是否符合预期等等。
 
 
 
-### 7. When using GRToolbox to export the storage LOG, what should I do if the LOG is incomplete?
+### 6. 存储的LOG怎么导出来？
 
--   This is most likely caused by an overflow of the RingBuffer used to temporarily store the LOG. In order to reduce the impact of erasing Flash on the application timing as much as possible, the LOG will not carry out the real storage operation, but put the LOG data into the buffer Ring Buffer, and write Flash in the `app_log_store_schedule()` function. If `app_log_store_schedule()` a LOG exceeding the size of RingBuffer is output before execution, the LOG will be incomplete or even lost. There are two solutions to this problem:
-    1. Increase the cache Ring Buffer. Modifying `components\libraries\app_log\app_log_store.h` the value of and `APP_LOG_STORE_CACHE_NUM` in `APP_LOG_STORE_LINE_SIZE` as appropriate increases the cache RingBuffer, but also increases the RAM footprint.
-    2. Increase the frequency of calls `app_log_store_schedule()`. For example, in an environment using an RTOS, increasing the priority of a task for running `app_log_store_schedule()` as appropriate allows the task to be scheduled more times, but operating Flash more frequently may have an impact on some time-sensitive applications.
+-   使用Android端的GRToolbox App导出，具体操作请参考《[GR5xx APP Log应用说明](https://docs.goodix.com/zh/online/app_log_bl/V3.2)》“获取日志”章节。
 
 
 
-### 8. When using GRToolbox to export logs, I find that only the most recent logs are available, and I can't get earlier logs. What should I do?
+### 7. 使用GRToolbox导出存储LOG时，LOG不完整怎么办？
 
--   LOG storage uses a ring overlay mechanism. When the storage space is insufficient, a new LOG will be used to overwrite the oldest LOG. Therefore, this problem can not be really solved, but can only be alleviated by increasing the storage area and reducing unnecessary LOG.
+-   很有可能是由于用来临时存储LOG的RingBuffer溢出导致的。为了尽可能降低擦写Flash对应用时序的影响，打LOG时并不会进行真正的存储操作，而是将LOG数据放入缓存RingBuffer中，并在`app_log_store_schedule()`函数中真正写入Flash。如果在`app_log_store_schedule()`执行之前就输出了超过RingBuffer大小的LOG，就会出现LOG不完整甚至丢LOG的情况。针对此问题有两种解决办法：
+    1. 增大缓存RingBuffer。根据情况修改`components\libraries\app_log\app_log_store.h`中`APP_LOG_STORE_LINE_SIZE`与`APP_LOG_STORE_CACHE_NUM`的值可以增大缓存RingBuffer，但同时也会增加RAM占用。
+    2. 增加调用`app_log_store_schedule()`的频次。例如在使用RTOS的环境下，视情况提高用于运行`app_log_store_schedule()`的任务的优先级可以让该任务得到更多次的调度，但更高频次地操作Flash可能会对某些时序敏感的应用造成影响。
+
+
+
+### 8. 使用GRToolbox导出日志时，发现只有最近的日志，无法获取更早的日志怎么办？
+
+-   LOG存储使用了环形覆盖机制，当存储空间不足时，会用新的LOG去覆盖最老的LOG。所以这个问题无法真正地解决，只能通过增大存储区和减少不必要的LOG来尽量缓解问题。

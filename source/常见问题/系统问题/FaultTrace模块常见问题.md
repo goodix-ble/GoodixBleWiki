@@ -1,27 +1,26 @@
-## FAQ for Fault Trace
+## Fault Trace模块常见问题
 
 
 
-### 1. How can I tell if my program is a HardFault?
+### 1. 如何判断我的程序是不是HardFault了？
 
-A: In the absence of a watchdog, when the system generates a HardFault, it will execute an endless loop in the interrupt handler. At this time, all modules, including Bluetooth LE, will not work properly, showing a "dead" effect. At this time, J-Link can be used to connect to the chip to determine whether a HardFault has occurred. After making sure the hardware is connected, open the J-Link Commander software, enter `connect` and press Enter, then **Please specify device/ core**enter `cortex-m4` and press Enter when prompted, enter `s` and press Return when prompted **Please specify target interface**, Enter `4000` at the prompt **Specify target interface speed [kHz]**and press Enter. At this time, the J-Link Commander will try to connect the chip, and it will be prompted **Cortex-M4 identified**after success, as shown in the following figure:
+A：在没有使用看门狗的情况下，当系统产生HardFault之后，会在中断处理函数中执行死循环，此时包括Bluetooth LE在内的所有模块都无法正常工作，表现出“死了”的效果。此时可以使用J-Link连上芯片来判断是否产生了HardFault。确保硬件连接后，打开J-Link Commander软件，输入`connect`并回车，然后在提示**Please specify device / core**时输入`cortex-m4`并回车，在提示**Please specify target interface**时输入`s`并回车，在提示**Specify target interface speed [kHz]**输入`4000`并回车。此时J-Link Commander会尝试连接芯片，成功后会提示**Cortex-M4 identified**，如下图所示：
 
 ![Img](../../_images/system/sys_backtrace_1.png) 
 
-At this point, enter `h` and press Enter, and you can see the current interrupt from **IPSR**the value of:
+此时输入`h`并回车，从**IPSR**的值可以看到目前所在的中断：
 
 ![Img](../../_images/system/sys_backtrace_3.png) 
 
-The interrupt number `003` represents the category that is currently in **HardFaultMemManage**and belongs to **HardFault**.
+中断号`003`代表目前处于**HardFaultMemManage**中，属于**HardFault**的范畴。
 
-If the watchdog is used, it is very likely that the first scene is lost due to the reset of the watchdog. In this case, it is necessary to use the exception recording function of the Fault Trace module to judge. When a Hard Fault occurs, the Fault Trace module automatically stores the exception information in NVDS. Refer to [GR5xx Fault Trace Module Application Notes](https://docs.goodix.com/zh/online/fault_trace_bl/V3.2)the chapter "Using the Fault Trace Module" for the import method of the module and how to read the stored error information.
+如果使用了看门狗，则很有可能因为看门狗复位导致第一现场丢失，此时就需要借助Fault Trace模块的异常记录功能来判断。在出现Hard Fault后，Fault Trace模块会自动将异常信息存入NVDS中。模块的导入方法以及如何读取存储的错误信息请参考《[GR5xx Fault Trace Module应用说明](https://docs.goodix.com/zh/online/fault_trace_bl/V3.2)》“使用Fault Trace Module”章节。
 
 
 
-### 2. Why does my program get HardFault?
+### 2. 为什么我的程序会HardFault？
 
-A: The causes of HardFault are very diverse, and there is no universal answer. However, it can be analyzed with the help of the exception mechanism of Cortex-M4 core and some key clues. When the cortex-backtrace component of the Fault Trace module is used, the call stack information is automatically pushed back during HardFault. The following is the message output for HardFault after using the cortex-backtrace component:
-
+A：HardFault产生的原因非常多样化，没有一个通用答案。不过可以借助Cortex-M4核心的异常机制并结合一些关键线索进行分析。在使用了Fault Trace模块的cortex-backtrace组件的情况下，HardFault时会自动反推调用栈信息。下面是使用了cortex-backtrace组件后HardFault时的信息输出：
 
 ```
 Fault on interrupt or bare metal(no OS) environment
@@ -156,75 +155,74 @@ Bus fault: imprecise data access violation
 Call stack info : 00203ca8<--00077de9<--00207375<--000002fd<--00207479<--00000003<--002073b1<--00000dfd<--002098fd<--0020988d<--00000dfd<--00040edf<--0004020f<--0020b8c1<--0020b8c1<--
 ```
 
-Cortex-backtrace mainly prints four messages: **Stack data**, **Key Register**, **Exception type**, and **Call stack**.
+cortex-backtrace主要打印了4个信息：**栈数据**、**关键寄存器**、**异常类型**和**调用栈**。
 
-Among them, **Stack data**the scene can be reproduced in combination with assembly, which is helpful for some HardFault debugging caused by data errors (such as division by 0, null pointer, etc.).
+其中，**栈数据**可以结合汇编进行场景重现，对于某些由数据错误引起的HardFault调试有帮助（例如除0、空指针等等）。
 
- **Key Register**Including:
+**关键寄存器**包括：
 
- - Registers for passing parameters, storing return values, and temporary data **R0-R3**
- -  **R12 (IP)**Register used for temporary interprocedural parameter transfer
- - Register used to store the **LR**return address
- - Register used to store the **PC**current running addr
- - Register for storing operation flag bit, interrupt number and operation status **PSR**
+ - 用于传参、存储返回值和临时数据的**R0-R3**寄存器
+ - 用于过程间临时传参的**R12 (IP)**寄存器
+ - 用于存储返回地址的**LR**寄存器
+ - 用于存储当前运行地址的**PC**寄存器
+ - 用于存储运算标志位、中断号及运行状态的**PSR**寄存器
 
-The **PC**register allows you to know where the exception occurred. You can look up the assembly instructions for the corresponding address through the assembly file ( `.s` file or `.asm` file), or you can use the tools provided `addr2line` by the GCC tool chain to get which line in which source file the address corresponds to. Sometimes you can see that **PC**the value is an odd number, which is caused by the Thumb mode of the Cortex-M4 core. In this case, the address value -1 is the correct address.
+通过**PC**寄存器可以知道异常具体发生在哪个位置。可以通过汇编文件（`.s`文件或是`.asm`文件）去查对应地址的汇编指令，也可以使用GCC工具链提供的`addr2line`工具来获取地址对应到哪个源文件中的哪一行。有时候可以看到**PC**的值是一个奇数，这是Cortex-M4核心的Thumb模式导致的，此时把地址值-1即是正确的地址。
 
- **Exception type**Is a resolution of the registers of the **CFSR（Congifurable Fault Status Register）**Cortex-M4 core. This register is used by the Cortex-M4 core to indicate the cause of a HardFault. HardFault is subdivided into 3 types: **Usage Fault**, **Bus Fault**, **Memory Management Fault**. Please refer to the [Cortex-M4 Devices Generic User Guide](https://developer.arm.com/documentation/dui0553/a/)"Configurable Fault Status Register" "section for the specific types and the specific meanings of the instructions.
+**异常类型**是对Cortex-M4核心的**CFSR（Congifurable Fault Status Register）**寄存器的解析。该寄存器是Cortex-M4核心用于指示HardFault产生原因的寄存器。HardFault又被细分为3种类型：**Usage Fault**、**Bus Fault**、**Memory Management Fault**。具体类型以及指示内容的具体含义请参考《[Cortex-M4 Devices Generic User Guide](https://developer.arm.com/documentation/dui0553/a/)》“Configurable Fault Status Register”章节。
 
- **Call stack**It is the calling relationship chain obtained by the Cortex Backtrace module through the analysis and reverse deduction of registers, running programs and stack data. As with **PC**register values, the entire call chain can be located in conjunction with an assembly file or `addr2line` tool.
+**调用栈**是Cortex Backtrace模块通过对寄存器、运行程序以及栈数据的分析和反推得到的调用关系链。和**PC**寄存器的值一样，结合汇编文件或者`addr2line`工具可以对整个调用链条进行定位。
 
 
 
-### 3. Can I analyze the above without using the Cortex Backtrace component?
+### 3. 如果不使用Cortex Backtrace组件，能分析上面的内容吗？
 
-A: Yes. The main function of Cortex Backtrace is to push back the call stack. If you do not use the Cortex Backtrace component, but only use the exception recording function of Fault Trace, you can do this after the Hard Fault occurs. Use GRToolbox or GProgrammer to read the exception information stored in the chip, for example:
-
+A：可以。Cortex Backtrace的主要功能是反推调用栈，如果不使用Cortex Backtrace组件，只使用Fault Trace的异常记录功能，则可以在Hard Fault发生后，使用GRToolbox或GProgrammer读取芯片内存储的异常信息，例如：
 
 ```
 HARDFAULT CALLSTACK INFO: R0-00123456 R1-DEADBEEF R2-00000000 R3-00000000 R12-00000000 LR-00077DED PC-00203C00 XPSR-61000011
 ```
 
-Since the Cortex Backtrace component is not used, Fault Trace only records information from key registers. At this time, it can also be analyzed by combining the value of the sum before **PC****LR**the exception with the or `addr2line` of the assembly file.
+由于不使用Cortex Backtrace组件，Fault Trace就只会记录关键寄存器的信息。此时同样可以通过异常前**PC**和**LR**的值结合汇编文件或`addr2line`来分析。
 
 
 
-### 4. If you don't use the Fault Trace module, can you analyze HardFault?
+### 4. 如果连Fault Trace模块也不使用，能分析HardFault吗？
 
-A: Yes. However, if you do not use the Fault Trace module, you need to keep the Hard Fault site to obtain the necessary information. If the site is reserved, J-Link can be used to connect the chip for analysis. The specific process is as follows:
+A：可以。但如果不使用Fault Trace模块，则需要保留Hard Fault现场以获取必要信息。在保留现场的情况下，可以使用J-Link连接芯片进行分析，具体流程为：
 
-1. Firstly, the stack pointer used at the site where the exception occurs is judged according to **LR**the value of the register:
+1. 首先通过**LR**寄存器的值判断异常发生现场使用的栈指针：
 
-| FPU used before interrupt | FPU not used before interrupt
+ | 中断前使用FPU | 中断前未使用FPU
 --- | --- | ---
- **In Handler Mode before interrupt, use MSP**| 0xFFFFFFE1 | 0xFFFFFFF1
- **Use MSP in Thread Mode before interrupt**| 0xFFFFFFE9 | 0xFFFFFFF9
- **Use PSP in Thread Mode before interruption**| 0xFFFFFFED | 0xFFFFFFFD
+**中断前在Handler Mode，使用MSP** | 0xFFFFFFE1 | 0xFFFFFFF1
+**中断前在Thread Mode，使用MSP** | 0xFFFFFFE9 | 0xFFFFFFF9
+**中断前在Thread Mode，使用PSP** | 0xFFFFFFED | 0xFFFFFFFD
 
-Similarly, take the previous Hard Fault as an example, use J-Link to connect the chip and read the field:
+同样以之前的Hard Fault为例，使用J-Link连接上芯片后读取现场：
 
 ![Img](../../_images/system/sys_backtrace_4.png) 
 
-As you can see from the figure, the stack pointer used before the exception occurred is **MSP = 0x2007FE08**.
+从图中可得，异常发生之前使用的栈指针为**MSP = 0x2007FE08**。
 
-2. After determining the stack pointer, read 8 words (32 Bytes) from the stack pointer. When an interrupt occurs, the Cortex-M4 presses the stack in the following order: **xPSR**, **PC**, **LR****R12****R3****R2****R1****R0**, Then the meaning of the eight words read is reversed. The sixth word is before the **PC**exception, and the seventh word is before **LR**the exception. These two values can be used to deduce the position before the exception occurs. Read here using the instructions of the J-Link Commander `mem32` :
+2. 在确定栈指针后，从栈指针处读8个word（32Byte）。Cortex-M4在中断发生时的压栈顺序为：**xPSR**, **PC**, **LR**, **R12**, **R3**, **R2**, **R1**, **R0**，则读取到的8个word的含义是反过来的。其中第6个word为异常前的**PC**，第7个word为异常前的**LR**。通过这两个值就可以反推出异常发生前的位置。此处使用J-Link Commander的`mem32`指令进行读取：
 
 ![Img](../../_images/system/sys_backtrace_2.png) 
 
-It can be seen **LR = 0x00077DED**from the figure that **PC = 0x00203E0C**..
+从图中可得，**LR = 0x00077DED**，**PC = 0x00203E0C**。
 
-Combined with assembly files or `addr2line` tools, specific locations can be located for analysis.
-
-
-
-### 5. What's going on when the PC points to an inexplicable place?
-
-A: There are several possibilities. First, it is possible to call an illegal address, where the value is more **LR**important than **PC**the position before the jump, such as when the function pointer is null or an illegal value. Second, maybe MSP and PSP are reversed, so the PC and LR are the wrong values. Third, for the GR5xx SoC, some codes are solidified into the ROM. In some cases (such as illegal parameters), the codes in the ROM may generate Hard Fault. At this time, the PC value is **0x00000000**between and **0x000FFFFF**(the ROM address range of different SoC models is different. Please refer to the Datasheet of the corresponding model for the specific scope).
+结合汇编文件或使用`addr2line`工具可以定位到具体的位置，进行分析。
 
 
 
-### 6. What if I can't read the data on the stack?
+### 5. 得到的PC指向了一个莫名其妙的地方是怎么回事？
 
-1. Please make sure that the chip has been stopped by Halt, that is, after J-Link is connected, you need to input `h` to stop the chip.
-2. Check that the stack pointer being read and the length to be read are in the correct RAM range.
-3. If none of the above steps can solve the problem, it is possible that the chip has a hardware exception. Please check whether the power supply and key power signals meet the requirements, or contact FAE for technical support.
+A：有几种可能。第一，可能是调用了非法地址，此时比起**PC**更需要关心**LR**的值，即在跳转之前的位置，例如函数指针为空或为非法值时的跳转。第二，可能MSP和PSP搞反了，这样反推得到的PC和LR就是错误的值。第三，对于GR5xx SoC有些代码被固化到ROM中，有些情况下（例如非法参数）可能会导致ROM中的代码产生Hard Fault，此时PC值在**0x00000000**到**0x000FFFFF**之间（不同型号SoC的ROM地址范围不同，具体范围请参考对应型号的Datasheet）。
+
+
+
+### 6. 读取不了栈上的数据怎么办？
+
+1. 请确保芯片已经被Halt住，即在J-Link连上后需要先输入`h`让芯片停止运行。
+2. 检查所读取的栈指针和所要读取的长度是否在正确的RAM范围内。
+3. 如果上述步骤都不能解决问题，则有可能是芯片存在硬件异常，请检查供电及各个关键电源信号是否符合要求，或联系FAE获取技术支持。
