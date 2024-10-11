@@ -1,29 +1,30 @@
-## APP LOGÄ£¿é³£¼ûÎÊÌâ
+## FAQ for LOG Module
 
 
 
-### 1. UART´òLOG×î¸ß²¨ÌØÂÊÄÜµ½¶àÉÙ£¿
+### 1. What is the maximum baud rate of UART for LOG?
 
--   GR5xxÏµÁĞSoCµÄUART×î´ó²¨ÌØÂÊ¾ùÎª4M£¬µ«¿¼ÂÇµ½ÎóÂëÂÊÒÔ¼°´®¿Ú×ªUSBĞ¾Æ¬µÄÄÜÁ¦£¬·Ç³£²»ÍÆ¼öÊ¹ÓÃ4MÀ´´òLOG¡£ÁíÍâ£¬GR5xx Starter Kit°åÔØµÄJ-Link OBĞ¾Æ¬×î´óÖ§³ÖµÄ²¨ÌØÂÊÖ»µ½460800£¬ËùÒÔÈç¹û¶Ô²¨ÌØÂÊÓĞ¸ü¸ßµÄÒªÇó£¬ĞèÒªÓÃ»§Íâ½ÓĞÔÄÜ¸üºÃµÄ´®¿Ú×ªUSB°å¡£
-
-
-
-### 2. Ê¹ÓÃ´®¿Ú´òLOGÔÚµçÄÔÉÏ¿´²»µ½Êä³öÔõÃ´°ì£¿
-
-¿ÉÒÔ¸ù¾İÒÔÏÂ²½ÖèÖğÒ»½øĞĞÅÅ²é£º
-
-1. ¼ì²é´®¿Ú¹¤¾ßµÄÅäÖÃ£¬°üÀ¨**²¨ÌØÂÊ**¡¢**ÆæÅ¼Ğ£Ñé**¡¢**Êı¾İÎ»**¡¢**Í£Ö¹Î»**¡¢**Á÷¿Ø**µÈÅäÖÃ£¬Óë´úÂëÖĞ³õÊ¼»¯UARTÊ±µÄÅäÖÃ±£³ÖÒ»ÖÂ¡£
-2. ¼ì²é_custom_config.h_µÄÅäÖÃ¡£`APP_LOG_ENABLE`ºêÓ¦µ±Îª`1`£¬`APP_LOG_PORT`ºêÓ¦µ±Îª`0`¡£
-3. ¼ì²éAPP LOGÄ£¿éÓëUARTÊÇ·ñÕıÈ·³õÊ¼»¯¡£ÔÚµ÷ÓÃ`app_log_init()`º¯ÊıÊ±£¬µÚ¶ş¸ö²ÎÊı`trans_func`Ó¦µ±ÊÇÊ¹ÓÃ¶ÔÓ¦UART½øĞĞÊä³öµÄº¯Êı¡£¾ßÌåĞ´·¨¿É²Î¿¼SDKµÄÊµÏÖ`platform\boards\board_SK.c`»ò¡¶[GR5xx APP LogÓ¦ÓÃËµÃ÷](https://docs.goodix.com/zh/online/app_log_bl/V3.2)¡·¡°Ä£¿é³õÊ¼»¯Óëµ÷¶È¡±ÕÂ½Ú¡£
-4. ¼ì²éUART³õÊ¼»¯Ê±Pin MuxÊÇ·ñÕıÈ·ÅäÖÃ¡£¾ßÌåµÄPin MuxÖµÇë²Î¿¼ËùÊ¹ÓÃSoCµÄDatasheet¡£
-5. Èç¹û´òLOGÊ±Ê¹ÓÃÁËDMA·½Ê½£¬ĞèÒª¼ì²éUART DMAµÄÅäÖÃÊÇ·ñÕıÈ·£¬ÒÔ¼°Ê¹ÓÃµÄUARTÊÇ·ñÖ§³ÖDMA£¨ÀıÈçGR551x SoCµÄUART1ÊÇ²»Ö§³ÖDMAµÄ£©¡£
-6. Èç¹û¾­¹ıÉÏÊö5²½ÈÔ²»ÄÜ½â¾öÎÊÌâ£¬Ôò½¨ÒéÊ¹ÓÃÂß¼­·ÖÎöÒÇ»òÊ¾²¨Æ÷ÔÚUART TX/RXÏßÉÏ×¥È¡²¨ĞÎ£¬À´ÅĞ¶ÏGR5xx SoCÊÇ·ñÓĞÊä³öÕıÈ·µÄUARTĞÅºÅ¡£Èç¹ûÓĞ£¬ÔòĞèÒª½øÒ»²½ÅÅ²é´®¿Ú×ªUSB»ò´®¿Ú¹¤¾ßµÄÎÊÌâ¡£Èç¹ûÃ»ÓĞ£¬ÔòÍÆ¼öÏÈÓÃSDKÖĞµÄExample¹¤³Ì½øĞĞ¶Ô±È²âÊÔ£¬À´È·ÈÏÊÇÓ²¼şÎÊÌâ»¹ÊÇÈí¼şÎÊÌâ£¬È»ºóÕë¶Ô¾ßÌåÎÊÌâ½øĞĞ·ÖÎöÅÅ²é¡£
+-   The maximum baud rate of UART of GR5xx series SoC is 4m, but considering the bit error rate and the ability of converting serial port to USB chip, it is not recommended to use 4m to play LOG. In addition, the maximum baud rate supported by the J-Link OB chip on the GR5xx Starter Kit is only up to the 460800, so if there is a higher requirement for the baud rate, the user needs to connect a serial port to USB board with better performance.
 
 
 
-### 3. ÔõÃ´ÓÃSEGGER RTT´òLOG£¿
+### 2. What should I do if I can't see the output on the computer when I use the serial port to type LOG?
 
-SDKÌá¹©µÄËùÓĞÄ£°å¹¤³Ì¾ùÖ§³ÖÍ¨¹ıSEGGER RTT´òLOG¡£ÔÚ¹¤³Ì¶ÔÓ¦µÄ_custom_config.h_ÖĞÕÒµ½`APP_LOG_PORT`ºê£¬½«ÖµĞŞ¸ÄÎª`1`£º
+You can check one by one according to the following steps:
+
+1. Check the configuration of the serial port tool, including **Baud rate**, **Parity check**, **Data bit**, **Stop Bit**, **Flow control**etc., and keep consistent with the configuration when the UART is initialized in the code.
+2. Check the configuration of the _ custom _ config. H _. `APP_LOG_ENABLE` Macros should be `1`. `APP_LOG_PORT` Macros should be `0`.
+3. Check that the APP LOG module and UART are properly initialized. When calling `app_log_init()` a function, the second argument `trans_func` should be the function that outputs using the corresponding UART. Please refer to the implementation `platform\boards\board_SK.c` of SDK or the section of "Module Initialization and Scheduling" in the [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2).
+4. Check whether Pin Mux is configured correctly when UART is initialized. Please refer to the Datasheet of the SoC used for the specific Pin Mux value.
+5. If the DMA mode is used during LOG, check whether the UART DMA configuration is correct and whether the UART used supports DMA (for example, the UART1 of GR551x SoC does not support DMA).
+6. If the problem still cannot be solved after the above five steps, it is recommended to use a logic analyzer or oscilloscope to capture the waveform on the UART TX/RX line to determine whether the GR5xx SoC outputs the correct UART signal. If so, you need to further troubleshoot the problem of serial port to USB or serial port tools. If not, it is recommended to conduct a comparison test with the Example project in the SDK to confirm whether it is a hardware problem or a software problem, and then analyze and troubleshoot the specific problem.
+
+
+
+### 3. How to type LOG with SEGGER RTT?
+
+All template projects provided by SDK support LOG via SEGGER RTT. Find `APP_LOG_PORT` the macro in the _ custom _ config. H _ corresponding to the project, and modify the value as `1` :
+
 
 ```c
 // <o> APP log port type
@@ -35,7 +36,7 @@ SDKÌá¹©µÄËùÓĞÄ£°å¹¤³Ì¾ùÖ§³ÖÍ¨¹ıSEGGER RTT´òLOG¡£ÔÚ¹¤³Ì¶ÔÓ¦µÄ_custom_config.h_ÖĞÕ
 #endif
 ```
 
-È»ºóÖØĞÂ±àÒëÏÂÔØ¼´¿É¡£ÔÚJ-Link RTT ViewerÖĞÁ¬½ÓÉè±¸Ê±£¬**Connection to J-Link**Ò»À¸Ò»°ãÑ¡Ôñ**USB**£¬**Specify Target Device**Ò»À¸ÌîĞ´**Cortex-M4**£¬**Target Interface & Speed**Ñ¡Ôñ**SWD**ºÍ**4000kHz**£¬**RTT Control Block**ÖĞÓĞÁ½ÖÖÌîĞ´·½·¨£¬µÚÒ»ÖÖÊÇÔÚ±àÒë²úÉúµÄ`.map`ÖĞÑ°ÕÒ`_SEGGER_RTT`·ûºÅµÄµØÖ·£¬È»ºóÔÚRTT ViewerÖĞÊ¹ÓÃ**Address**Ñ¡ÏîÌîĞ´£»µÚ¶şÖÖ·½Ê½ÊÇÌîĞ´µØÖ··¶Î§ÈÃRTT Viewer×Ô¶¯ËÑË÷£¬ÕâÀïÍ¨³£ÌîĞ´ÍêÕûµÄSRAM·¶Î§¼´¿É¡£¸÷SoCµÄµØÖ··¶Î§Çë²Î¿¼ÏÂ±í£º
+Then recompile and download. When connecting equipment in the J-Link RTT Viewer, **Connection to J-Link**one column is General Select **USB**and **Specify Target Device**the other is Fill **Cortex-M4**, **Target Interface &amp; Speed**Select **SWD**and **4000kHz**, **RTT Control Block**There are two ways to fill in. The first is to find `_SEGGER_RTT` the address of the symbol in the compiled `.map` file, and then use **Address**the option to fill in in RTT Viewer; The second way is to fill in the address range for RTT Viewer to search automatically. Here, it is usually enough to fill in the complete SRAM range. Please refer to the following table for the address range of each SoC:
 
 SoC | Search Range
 -- | ---
@@ -45,53 +46,52 @@ GR5525 | 0x20000000 0x2003FFFF
 GR5526 | 0x20000000 0x2007FFFF
 GR533x | 0x20000000 9x20017FFF
 
-Èç¹ûÊÇ×Ô¼ºµÄ¹¤³Ì£¬Çë²Î¿¼SDKµÄÊµÏÖ½øĞĞÒÆÖ²£¬»ò²Î¿¼¡¶[GR5xx APP LogÓ¦ÓÃËµÃ÷](https://docs.goodix.com/zh/online/app_log_bl/V3.2)¡·¡°Ä£¿é³õÊ¼»¯Óëµ÷¶È¡±ÕÂ½Ú¡£
+If it is your own project, please refer to the SDK implementation for migration, or refer to the "Module Initialization and Scheduling" section of the [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2).
 
 
 
-### 4. ÎªÊ²Ã´RTT´òÓ¡ÈÕÖ¾Ò»¶ÎÊ±¼äºó¾Í²»ÔÙ´òÓ¡ÁË£¬ÏµÍ³Ò²¿¨ËÀÁË£¿
+### 4. Why does RTT print the log for a period of time and then stop printing, and the system is stuck?
 
-1.  ²»ÔÙ´òÓ¡ÈÕÖ¾µÄÔ­ÒòÊÇRTT·½Ê½´òÓ¡ÈÕÖ¾ÒÀÀµJ-LinkÁ¬½Ó£¬µ±GR5xx SoC½øÈëË¯ÃßÄ£Ê½Ö®ºó£¬J-LinkÁ¬½Ó»á¶Ï¿ª£¬J-Link RTT Viewer²»¾ß±¸×Ô¶¯ÖØÁ¬¹¦ÄÜ£¬µ±ÏµÍ³ÔÙ´Î»½ĞÑÊ±£¬J-LinkÁ¬½ÓÒÑ¾­¶Ï¿ªÁË£¬ËùÒÔ±íÏÖÎª²»ÔÙ´òÓ¡ºóĞøLOG¡£
-2.  ÏµÍ³¿¨ËÀµÄÔ­ÒòÔòºÜÓĞ¿ÉÄÜÊÇRTT´òÓ¡Ä£Ê½Îª×èÈûÄ£Ê½£¬µ±´«ÊäFIFOÂúÁËÖ®ºó£¬RTT¾Í»á×èÈûµÈ´ıÉÏÎ»»ú½«FIFO¶Á¿Õ¡£½áºÏµÚ1µãÖĞÃèÊöµÄÔ­Òò£¬Ë¯Ãß»½ĞÑÖ®ºóJ-LinkÁ¬½ÓÒÑ¾­¶Ï¿ª£¬ÉÏÎ»»úÃ»ÓĞÔÙ¼ÌĞø¶ÁÈ¡FIFO£¬µ±FIFOÂúÁËÖ®ºóÔÙ´òLOG£¬×èÈûµÈ´ıµÄĞĞÎª¾Í»á±íÏÖÎª¿¨ËÀ¡£
+1.  The reason why the log is no longer printed is that the log printing in RTT mode depends on the J-Link connection. When the GR5xx SoC enters the sleep mode, the J-Link connection will be disconnected. The J-Link Link RTT Viewer does not have the automatic reconnection function. When the system wakes up again, the J-link connection has been disconnected. Therefore, the subsequent LOG will not be printed.
+2.  The reason why the system is stuck is likely to be that the RTT printing mode is blocking mode. When the transmission FIFO is full, the RTT will block and wait for the host computer to read the FIFO empty. Combined with the reason described in point 1, the J-Link connection has been disconnected after sleep wake-up, and the upper computer does not continue to read the FIFO. When the FIFO is full, the LOG is set, and the blocking waiting behavior will be stuck.
 
-½â¾ö°ì·¨ÓĞ2ÖÖ£º
+There are two solutions:
 
-1.  ¹Ø±ÕµÍ¹¦ºÄÄ£Ê½£¬ÔÚÏµÍ³³õÊ¼»¯Ê±¼ÓÈë`pwr_mgmt_mode_set(PMR_MGMT_ACTIVE_MODE);`£¬ÈÃSoC±£³ÖÔÚActive×´Ì¬¿ÉÒÔ±ÜÃâJ-LinkÁ¬½Ó¶Ïµô£¬Í¬Ê±¹æ±Ü¡°¶ªLOG¡±Óë¡°ÏµÍ³¿¨ËÀ¡±µÄÎÊÌâ£¬È±µãÊÇÎŞ·¨Õë¶ÔµÍ¹¦ºÄ²¿·Ö½øĞĞÓĞĞ§µ÷ÊÔ¡£
-2.  ½«RTTÊä³öÄ£Ê½¸ü¸ÄÎª·Ç×èÈûÄ£Ê½£¬ÔÚ³õÊ¼»¯RTTÊ±Ê¹ÓÃ`SEGGER_RTT_ConfigUpBuffer()`º¯ÊıÀ´ĞŞ¸ÄÊä³öÄ£Ê½¡£·Ç×èÈûÄ£Ê½·ÖÁ½ÖÖ£º`SEGGER_RTT_MODE_NO_BLOCK_SKIP`ºÍ`SEGGER_RTT_MODE_NO_BLOCK_TRIM`¡£µ±Óöµ½FIFOÊ£Óà¿Õ¼ä²»×ãÒÔ·ÅÏÂÍêÕûµÄ´ı´òÓ¡ÈÕÖ¾£¬Èç¹ûÉèÖÃÎªSKIP£¬ÔòÌø¹ı¸Ã´Î´òÓ¡£»Èç¹ûÉèÖÃÎªTRIM£¬ÔòÖ»°ÑFIFOÌîÂú£¬³¬³öµÄ²¿·ÖÈ«²¿¶ªÆú¡£ÕâÖÖ·½·¨ËäÈ»²»Ó°ÏìµÍ¹¦ºÄ£¬Ö»ÄÜ±ÜÃâJ-LinkÁ¬½Ó¶Ï¿ªºó²»»á×èÈû¿¨ËÀ£¬²¢²»ÄÜ±ÜÃâ¶ªLOGµÄÇé¿ö¡£
-
-
-
-### 5.  J-Link RTT ViewerÁ¬ÉÏÖ®ºó¿´²»µ½LOGÔõÃ´°ì£¿
-
-¿ÉÒÔ¸ù¾İÒÔÏÂ²½ÖèÖğÒ»½øĞĞÅÅ²é£º
-
-1. ¼ì²é_custom_config.h_µÄÅäÖÃ¡£`APP_LOG_ENABLE`ºêÓ¦µ±Îª`1`£¬`APP_LOG_PORT`ºêÓ¦µ±Îª`1`¡£
-
-2. ¼ì²éAPP LOGÄ£¿éÓëRTTÊÇ·ñÕıÈ·³õÊ¼»¯¡£ÔÚµ÷ÓÃ`app_log_init()`º¯ÊıÊ±£¬µÚ¶ş¸ö²ÎÊı`trans_func`Ó¦µ±ÊÇÊ¹ÓÃ`SEGGER_RTT_Write()`½øĞĞÊä³öµÄº¯Êı£¨µ«²»ÄÜÊÇ`SEGGER_RTT_Write()`±¾Éí£¬ÒòÎªÈë²Î²»Ò»Ñù£©¡£¾ßÌåĞ´·¨¿É²Î¿¼SDKµÄÊµÏÖ`platform\boards\board_SK.c`»ò¡¶[GR5xx APP LogÓ¦ÓÃËµÃ÷](https://docs.goodix.com/zh/online/app_log_bl/V3.2)¡·¡°Ä£¿é³õÊ¼»¯Óëµ÷¶È¡±ÕÂ½Ú¡£
-
-3. ¼ì²éRTTÖĞµÄ¸÷ÏîÅäÖÃ¡£Ê×ÏÈ¼ì²é`_SEGGER_RTT`±äÁ¿ÊÇ·ñ±»ÕıÈ··ÅÖÃ¡£Í¨³£Çé¿öÏÂ²»ÍÆ¼ö½«`_SEGGER_RTT`±äÁ¿·ÅÖÃµ½¹Ì¶¨µÄµØÖ·£¬µ«Èç¹ûÓÃ»§Ñ¡ÔñÁË½«Õâ¸ö±äÁ¿·Åµ½¹Ì¶¨µØÖ·£¬ÔòĞèÒªÈ·±£Õâ¸ö¹Ì¶¨µØÖ·´æÔÚÓÚSRAMµØÖ··¶Î§ÒÔÄÚ¡£
-
-4. ¼ì²éJ-Link RTT ViewerÁ¬½ÓÊ±`RTT Control Block`µÄµØÖ·ÉèÖÃÊÇ·ñÕıÈ·¡£GR5xx SoCÔİ²»Ö§³Ö**Auto Detection**Ä£Ê½£¬ĞèÒªÊ¹ÓÃ**Address**Ä£Ê½ÊÖ¶¯ÌîÈë£¬»òÕßÊ¹ÓÃ**Search Range**Ä£Ê½²¢ÌîÈëµØÖ··¶Î§ÈÃRTT Viewer×Ô¶¯È¥ËÑË÷¡£¾ßÌåµÄÉèÖÃ·½·¨Çë²Î¿¼¡°ÔõÃ´ÓÃSEGGER RTT´òLOG£¿¡±ÕÂ½ÚµÄ»Ø´ğ¡£
-
-5. Èç¹û¾­¹ıÉÏÊö4²½ÒÀÈ»ÎŞ·¨¶¨Î»²¢½â¾öÎÊÌâ£¬ÔòĞèÒªÍ¨¹ıµ¥²½µ÷ÊÔ¸ú×ÙÀ´È·¶¨Ã¿Ò»¸ö´òLOGµÄÃ¿Ò»¸ö»·½ÚÊÇ·ñ¶¼ÕıÈ·Ö´ĞĞ£¬Èë²ÎÓë·µ»ØÖµÊÇ·ñ·ûºÏÔ¤ÆÚµÈµÈ¡£
+1.  Turn off the low power consumption mode and add it `pwr_mgmt_mode_set(PMR_MGMT_ACTIVE_MODE);` when the system is initialized. Keeping the SoC in the Active state can avoid the disconnection of J-Link connection and avoid the problems of "lost LOG" and "system stuck". The disadvantage is that it can not effectively debug the low power consumption part.
+2.  Change the RTT output mode to non-blocking mode. Use `SEGGER_RTT_ConfigUpBuffer()` the function to modify the output mode when initializing the RTT. There are two non-blocking modes: `SEGGER_RTT_MODE_NO_BLOCK_SKIP` and `SEGGER_RTT_MODE_NO_BLOCK_TRIM`. When the remaining space of the FIFO is not enough to place the complete log to be printed, if it is set to SKIP, the printing will be skipped; if it is set to TRIM, only the FIFO will be filled up, and the excess part will be discarded. Although this method does not affect the low power consumption, it can only avoid that the J-Link connection will not be blocked after disconnection, and it can not avoid the loss of LOG.
 
 
 
-### 6. ´æ´¢µÄLOGÔõÃ´µ¼³öÀ´£¿
+### 5.  What should I do if I can't see the LOG after J-Link RTT Viewer is connected?
 
--   Ê¹ÓÃAndroid¶ËµÄGRToolbox Appµ¼³ö£¬¾ßÌå²Ù×÷Çë²Î¿¼¡¶[GR5xx APP LogÓ¦ÓÃËµÃ÷](https://docs.goodix.com/zh/online/app_log_bl/V3.2)¡·¡°»ñÈ¡ÈÕÖ¾¡±ÕÂ½Ú¡£
+You can check one by one according to the following steps:
+
+1. Check the configuration of the _ custom _ config. H _. `APP_LOG_ENABLE` Macros should be `1`. `APP_LOG_PORT` Macros should be `1`.
+
+2. Check that the APP LOG module and RTT are properly initialized. When calling `app_log_init()` a function, the second parameter `trans_func` should be the function that is used `SEGGER_RTT_Write()` for output (but not `SEGGER_RTT_Write()` itself, because the input parameters are different). Please refer to the implementation `platform\boards\board_SK.c` of SDK or the section of "Module Initialization and Scheduling" in the [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2).
+
+3. Check each configuration in the RTT. First check that `_SEGGER_RTT` the variables are placed correctly. It is generally not recommended to place a `_SEGGER_RTT` variable at a fixed address, but if the user chooses to place the variable at a fixed address, you need to ensure that the fixed address exists within the SRAM address range.
+
+4. Check whether the address is set correctly when `RTT Control Block` the J-Link RTT Viewer is connected. The GR5xx SoC does not support **Auto Detection**the mode at present. You need to use the **Address**mode to fill in manually, or use the **Search Range**mode and fill in the address range to let the RTT Viewer search automatically. Please refer to "How to use SEGGER RTT to make LOG?" "For the specific setting method Chapter answers.
+
+5. If the problem still cannot be located and solved after the above four steps, it is necessary to determine whether each link of each LOG is executed correctly and whether the input and return values are in line with expectations through single-step debugging and tracing.
 
 
 
-### 7. Ê¹ÓÃGRToolboxµ¼³ö´æ´¢LOGÊ±£¬LOG²»ÍêÕûÔõÃ´°ì£¿
+### 6. How to export the stored LOG?
 
--   ºÜÓĞ¿ÉÄÜÊÇÓÉÓÚÓÃÀ´ÁÙÊ±´æ´¢LOGµÄRingBufferÒç³öµ¼ÖÂµÄ¡£ÎªÁË¾¡¿ÉÄÜ½µµÍ²ÁĞ´Flash¶ÔÓ¦ÓÃÊ±ĞòµÄÓ°Ïì£¬´òLOGÊ±²¢²»»á½øĞĞÕæÕıµÄ´æ´¢²Ù×÷£¬¶øÊÇ½«LOGÊı¾İ·ÅÈë»º´æRingBufferÖĞ£¬²¢ÔÚ`app_log_store_schedule()`º¯ÊıÖĞÕæÕıĞ´ÈëFlash¡£Èç¹ûÔÚ`app_log_store_schedule()`Ö´ĞĞÖ®Ç°¾ÍÊä³öÁË³¬¹ıRingBuffer´óĞ¡µÄLOG£¬¾Í»á³öÏÖLOG²»ÍêÕûÉõÖÁ¶ªLOGµÄÇé¿ö¡£Õë¶Ô´ËÎÊÌâÓĞÁ½ÖÖ½â¾ö°ì·¨£º
-    1. Ôö´ó»º´æRingBuffer¡£¸ù¾İÇé¿öĞŞ¸Ä`components\libraries\app_log\app_log_store.h`ÖĞ`APP_LOG_STORE_LINE_SIZE`Óë`APP_LOG_STORE_CACHE_NUM`µÄÖµ¿ÉÒÔÔö´ó»º´æRingBuffer£¬µ«Í¬Ê±Ò²»áÔö¼ÓRAMÕ¼ÓÃ¡£
-    2. Ôö¼Óµ÷ÓÃ`app_log_store_schedule()`µÄÆµ´Î¡£ÀıÈçÔÚÊ¹ÓÃRTOSµÄ»·¾³ÏÂ£¬ÊÓÇé¿öÌá¸ßÓÃÓÚÔËĞĞ`app_log_store_schedule()`µÄÈÎÎñµÄÓÅÏÈ¼¶¿ÉÒÔÈÃ¸ÃÈÎÎñµÃµ½¸ü¶à´ÎµÄµ÷¶È£¬µ«¸ü¸ßÆµ´ÎµØ²Ù×÷Flash¿ÉÄÜ»á¶ÔÄ³Ğ©Ê±ĞòÃô¸ĞµÄÓ¦ÓÃÔì³ÉÓ°Ïì¡£
+-   Use the GRToolbox App on the Android side to export. For specific operations, please refer to [GR5xx APP Log Application Notes](https://docs.goodix.com/zh/online/app_log_bl/V3.2)the section "Obtaining Logs".
 
 
 
-### 8. Ê¹ÓÃGRToolboxµ¼³öÈÕÖ¾Ê±£¬·¢ÏÖÖ»ÓĞ×î½üµÄÈÕÖ¾£¬ÎŞ·¨»ñÈ¡¸üÔçµÄÈÕÖ¾ÔõÃ´°ì£¿
+### 7. When using GRToolbox to export the storage LOG, what should I do if the LOG is incomplete?
 
--   LOG´æ´¢Ê¹ÓÃÁË»·ĞÎ¸²¸Ç»úÖÆ£¬µ±´æ´¢¿Õ¼ä²»×ãÊ±£¬»áÓÃĞÂµÄLOGÈ¥¸²¸Ç×îÀÏµÄLOG¡£ËùÒÔÕâ¸öÎÊÌâÎŞ·¨ÕæÕıµØ½â¾ö£¬Ö»ÄÜÍ¨¹ıÔö´ó´æ´¢ÇøºÍ¼õÉÙ²»±ØÒªµÄLOGÀ´¾¡Á¿»º½âÎÊÌâ¡£
+-   This is most likely caused by an overflow of the RingBuffer used to temporarily store the LOG. In order to reduce the impact of erasing Flash on the application timing as much as possible, the LOG will not carry out the real storage operation, but put the LOG data into the buffer Ring Buffer, and write Flash in the `app_log_store_schedule()` function. If `app_log_store_schedule()` a LOG exceeding the size of RingBuffer is output before execution, the LOG will be incomplete or even lost. There are two solutions to this problem:
+    1. Increase the cache Ring Buffer. Modifying `components\libraries\app_log\app_log_store.h` the value of and `APP_LOG_STORE_CACHE_NUM` in `APP_LOG_STORE_LINE_SIZE` as appropriate increases the cache RingBuffer, but also increases the RAM footprint.
+    2. Increase the frequency of calls `app_log_store_schedule()`. For example, in an environment using an RTOS, increasing the priority of a task for running `app_log_store_schedule()` as appropriate allows the task to be scheduled more times, but operating Flash more frequently may have an impact on some time-sensitive applications.
 
+
+
+### 8. When using GRToolbox to export logs, I find that only the most recent logs are available, and I can't get earlier logs. What should I do?
+
+-   LOG storage uses a ring overlay mechanism. When the storage space is insufficient, a new LOG will be used to overwrite the oldest LOG. Therefore, this problem can not be really solved, but can only be alleviated by increasing the storage area and reducing unnecessary LOG.

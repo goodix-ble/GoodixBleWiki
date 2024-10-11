@@ -13,3 +13,4 @@
    应用笔记/index
    设计参考/index
    常见问题/index
+   Language

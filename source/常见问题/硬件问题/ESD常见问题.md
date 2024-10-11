@@ -1,12 +1,12 @@
-## ESD常见问题
+## FAQ for ESD
 
 
 
-### 1. IO引脚靠近PCB边缘，为什么系统级ESD性能会下降？ 
-* 接地路径不稳定：IO引脚距离PCB边缘较近，接地路径可能会变得不稳定，增加了接地回路的不确定性，导致ESD事件发生时，电流无法有效地通过接地回路回流，降低了ESD保护性能。
-* ESD泄漏路径：靠近PCB边缘的IO引脚可能会增加ESD泄漏路径的长度，使得ESD冲击时的泄漏电流无法迅速排出，影响了ESD性能。
-* EMI/EMC效应：靠近PCB边缘的IO引脚更容易受到外部电磁干扰（EMI）和电磁兼容性（EMC）的影响。这些EMI/EMC干扰可能会影响IO引脚的正常工作，导致ESD性能下降，尤其是易受干扰的敏感信号，如时钟、复位等信号。
-* 因此，在PCB设计中，建议通信信号网络尽量布局在PCB中间层并用GND屏蔽，尤其是易受干扰的敏感信号禁止靠近PCB板边缘走线，并建议做包地处理，确保稳定的接地路径，减小ESD泄漏路径，并减少外部干扰对IO引脚的影响，从而提高ESD保护性能。
+### 1. Why is the system-level ESD performance degraded when IO pins are near the edge of the PCB?
+* Ground path instability: If the IO pin is close to the edge of the PCB, the ground path may become unstable, which increases the uncertainty of the ground loop, resulting in the current can not effectively flow back through the ground loop when ESD events occur, which reduces the ESD protection performance.
+* ESD leakage path: IO pins near the edge of the PCB may increase the length of the ESD leakage path, so that the leakage current during ESD impact cannot be discharged quickly, which affects the ESD performance.
+* EMI/EMC effects: IO pins near the edge of the PCB are more susceptible to external electromagnetic interference (EMI) and electromagnetic compatibility (EMC). These EMI/EMC disturbances may affect the normal operation of IO pins, resulting in poor ESD performance, especially sensitive signals that are susceptible to interference, such as clock, reset, and so on.
+* Therefore, in PCB design, it is recommended that the communication signal network should be laid out in the middle layer of the PCB as far as possible and shielded with GND. In particular, sensitive signals that are vulnerable to interference should not be routed close to the edge of the PCB, and it is recommended to wrap the ground to ensure a stable grounding path, reduce the ESD leakage path, and reduce the impact of external interference on IO pins, so as to improve the ESD protection performance.
 
 
 
