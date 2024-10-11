@@ -1,64 +1,64 @@
-## FAQ for RF
+## RF常见问题
 
 
 
-### 1. Can the PI circuit for RF be simplified or removed?
-* The PI circuit near the GR5xx end is used to match the internal PA of the chip and cannot be simplified and removed. It is not recommended to change the inductance value and capacitance value of the circuit, and it is recommended to keep consistent with the recommended circuit. The PCB design follows the corresponding RF port design requirements of the corresponding hardware design guide. If the PCB design requirements cannot be fully followed due to structural and other reasons, and the RF performance after returning to the board is not ideal, the parameters can be properly fine-tuned after the RF or hardware engineer's test verification. The parameters can usually be adjusted according to the PA Load Pull matching method. See the GR5xx RF Matching and Commissioning Guide for details. In addition, the impedance on the RF channel coming out of the chip PI is 50 Ω, which is compatible with any 2.4 GHz band antenna on the market (2400 MHz to 2484 MHz).
-* The PI circuit near the antenna end is used to match the antenna, and the circuit can be changed according to the antenna used. The matching of the antenna can be adjusted simply by testing the S11 parameters of the vector network analyzer or Smith chart. However, the gain, directivity and other indicators of the antenna are recommended to seek a professional antenna factory to complete the matching test.
+### 1. 射频的PI电路可以简化或移除吗？
+* 靠近GR5xx端的PI电路用于匹配芯片内部PA，不能简化和移除。该电路的电感值和电容值不建议改变，建议保持和推荐电路一致，PCB设计遵循对应硬件设计指南相应的RF端口设计要求，如因结构等原因不能完全遵循PCB设计要求，回板后的RF性能不太理想，可以在射频或硬件工程师试验验证后适当地微调参数，通常可以按照PA Load Pull匹配方法来调整参数，详见《GR5xx RF匹配调试指南》。另外，从芯片PI出来后的RF通道上的阻抗是50 Ω，可以兼容市面上任意2.4 GHz频段的天线（2400 MHz～2484 MHz）。
+* 靠近天线端的PI电路是用于匹配天线的，该电路可以根据所使用的天线进行更改。天线的匹配问题，可以通过矢量网络分析仪测试S11参数或史密斯圆图进行简单的匹配调节。但是天线的增益、方向性等其他指标则建议寻求专业的天线厂完成匹配测试。
 
 
 
-### 2. How does GR551x extend PA or FEM to improve transmission distance?
+### 2. GR551x如何扩展PA或FEM提高传输距离？
 
-   * The GR551x supports extended external PAs.
-   * GPIO2 is used as the external PA RX enable signal and GPIO3 is used as the external PA TX enable signal.
-   * The corresponding function needs to be configured in the software. Before the RF circuit acts on TX or RX, the corresponding level will be pulled up, and after that, the level will be pulled down.
-   * The GR551x itself does not use these signals to control, but only to control the external FEM.
-
-
-
-### 3. What are the reasons for the low conducted sensitivity and transmit power of the GR5xx?
-
-   * Whether the RF matching parameters are selected according to the reference design.
-   * The first component of the GR5xx RF layout matching network is placed no more than 1 mm from the RFIO pin.
-   * The RF wiring shall be as short and straight as possible. If the structural restriction requires turning, the inverted arc shall be required at the corner. The right angle or the included angle less than 90 ° is prohibited.
-   * The surface layer is preferred for the RF line to avoid punching holes and changing layers, and to avoid the existence of branches in the line. The complete reference ground plane must be ensured below the RF line. The RF line width shall be designed to be consistent with the pad of the matching device as far as possible, so as to avoid damaging the continuity of the characteristic impedance of the 50 Ω transmission line due to the inconsistency between the pad width of the component and the trace width.
-   * DC-DC ripple needs to be less than 16 mV.
-   * The 32m XO crystal clock needs to be calibrated.
+   * GR551x支持扩展外部PA。
+   * GPIO2作为外置PA RX使能，GPIO3作为外置PA TX使能信号。
+   * 需要在软件中配置对应功能，在RF电路动作TX或RX之前，会把对应的电平拉高，结束后会把电平拉低。
+   * GR551x本身不使用这些信号来控制，仅用来控制外接的FEM。
 
 
 
-### 4. Why are there two first matching capacitors in the GR5331/GR5330 series?
+### 3. GR5xx传导灵敏度、发射功率偏低有哪些原因？
 
-   - In the FCC harmonic test, it is necessary to make a separate filtering treatment at the position of higher harmonics. For example, the 0.3 pF material (GRM0335C1HR30WA01) of the reference design is a special selection, and the impedance point at the 7th harmonic position is the lowest (the self-resonance point of the capacitor). 2 pF material (GRM0335C1H2R0BA01) has the lowest impedance in the third harmonic, which can play a better filtering effect.
-
-
-
-### 5. Why are there small pF capacitors on the GR533x series VBAT _ RF and GPIO0/1?
-
-   - In the FCC harmonic test, the high-order harmonics of the GR533x series are mainly radiated through the RF _ TX pin and its nearby pins, especially the VBAT _ RF pin, so we deliberately added a pF capacitor on the VBAT _ RF. The capacitor is also specially selected to have the self-resonance point at the frequency band to be filtered. For example, the GR5332 series is selected to have 3.9 pF (the self-resonance point is at the 2nd harmonic position), and the GR5331/GR5330 series is selected to have 2.0 pF (the self-resonant point is at the 3rd harmonic position).
-   - GPIO0/1 may also have higher harmonic radiation in the actual measurement process, but in general, the pF capacitor of these two pins is only reserved as a debugging position, and whether pF capacitor filtering needs to be added is determined according to the actual FCC test results.
-   - Refer to the RSE section of the [GR533x Hardware Design Guide](https://docs.goodix.com/zh/online/hardware_design_guide_d/V1.2)for how to optimize Layout to optimize higher harmonics.
+   * RF匹配参数是否按照参考设计选型。
+   * GR5xx RF布局匹配网络的第一个元器件放置在离RFIO引脚不超过1 mm的位置。
+   * RF走线尽可能短而直，如结构限制需要转弯，则转角处要求倒圆弧。禁止出现直角或小于90°夹角走线。
+   * RF线优选走表层，避免打过孔换层， 避免走线存在分支，RF走线下方必须保证完整参考地平面。RF线宽尽量设计和匹配器件焊盘一致，避免由于元器件的焊盘宽度与走线宽度不一致而破坏50 Ω传输线特性阻抗的连续性。
+   * DC-DC纹波需要低于16 mV。
+   * 32M XO晶体时钟需要校准。
 
 
 
-### 6. What about the poor modulation characteristics of GR533x series?
+### 4. 为什么GR5331/GR5330系列的第一颗匹配电容有两个？
 
-   - In the GR533x series test, if it is found that the modulation characteristic index is relatively poor (such as the typical df2 99% index, Max drift rate, etc.), or the index Fail Bluetooth protocol appears, it is recommended to switch to the SYSLDO power supply mode first. In general, it is caused by the excessive ripple of the DCDC power supply.
-   - It is recommended to adjust the parameters of the VDD _ RF filter bead after it is confirmed that the problem is caused by the DCDC power supply. Please [GR533x Reference Design](https://www.goodix.com/zh/docview/GR533x Reference Design_V1.2?objectId=362&objectType=document&version=609)refer to the recommended bead. Increase the DCR parameter of the bead when selecting the type. In general, the DCDC ripple can be better suppressed.
-   - Check the reason for the increase of DCDC ripple. First, check the loop of DCDC Layout to see if it is caused by the excessive loop of DCDC IN/OUT. It is necessary to change the PCB Layout. For the DCDC power supply layout, please refer to [GR533x Hardware Design Guide](https://docs.goodix.com/zh/online/hardware_design_guide_d/V1.2)the power supply layout section of.
+   - 在FCC谐波测试中，需要在高次谐波位置做单独的滤波处理，比如参考设计的0.3 pF物料（GRM0335C1HR30WA01）是特殊选型，在7次谐波位置阻抗点最低（电容的自谐振点），2 pF物料（GRM0335C1H2R0BA01）在3次谐波阻抗位置最低，能够起到比较好的滤波效果。
 
 
 
-### 7. What is the reason why the GR533x SK board power or sensitivity cannot be matched to the GR533x different PCB boards using reference design matching parameters?
+### 5. 为什么GR533x系列VBAT_RF和GPIO0/1上面有小pF电容？
 
-   * Factors that cause differences between the user's actual match parameters and the reference match parameters include:
-        * The matching parameters [GR533x Reference Design](https://www.goodix.com/zh/docview/GR533x Reference Design_V1.2?objectId=362&objectType=document&version=609)in are based on GR533x SK board debugging.
-        * The PCB stack structure may affect the impedance and parasitic parameters of the RF traces.
-        * RF components that differ from the reference design recommendation BOM are used.
-        * Layout differences due to PCB structure limitations.
+   - 在FCC谐波测试中，GR533x系列的高次谐波主要通过RF_TX脚及其附近的管脚辐射出来，尤其是VBAT_RF引脚，所以我们特意增加了pF电容在VBAT_RF上。该电容选型也是特挑自谐振点在需要滤波的频段，比如GR5332系列选型3.9 pF（自谐振点在2次谐波位置），GR5331/GR5330系列选型2.0 pF（自谐振点在3次谐波位置）。
+   - GPIO0/1在实测过程中也可能存在高次谐波的辐射，不过一般情况下这两个脚的pF电容只是作为调试位置预留，根据实际FCC测试结果来决定是否需要增加pF级电容滤波。
+   - 关于如何优化Layout来优化高次谐波，请参考《[GR533x硬件设计指南](https://docs.goodix.com/zh/online/hardware_design_guide_d/V1.2)》的RSE章节。
 
-   * When designing products based on GR533x, it is recommended to refer to the recommended matching device patches in the [GR533x Reference Design](https://www.goodix.com/zh/docview/GR533x Reference Design_V1.2?objectId=362&objectType=document&version=609), and then fine-tune the matching parameters according to the PCB stack and layout of the actual product. For detailed matching and debugging guidelines, please refer to [GR533x RF Matching Commissioning Guide](https://docs.goodix.com/zh/online/rf_matching_bl_d/V1.0).
+
+
+### 6. GR533x系列调制特性差怎么办？
+
+   - GR533x系列测试若发现调制特性指标比较差（比如典型的df2 99%指标、max drift rate等），或者出现指标Fail蓝牙协议，首先建议切换到SYSLDO供电模式查看，一般情况下都是DCDC电源纹波过大导致。
+   - 确定是DCDC电源问题之后建议调整VDD_RF滤波磁珠的参数，请参考《[GR533x Reference Design](https://www.goodix.com/zh/docview/GR533x Reference Design_V1.2?objectId=362&objectType=document&version=609)》推荐磁珠，选型时加大磁珠的DCR参数，一般情况下可以更好地抑制DCDC纹波。
+   - 检查DCDC纹波变大的原因，首先检查DCDC Layout的环路，看是否是DCDC IN/OUT的环路过大导致，需要更改PCB Layout，DCDC电源布局请参考《[GR533x硬件设计指南](https://docs.goodix.com/zh/online/hardware_design_guide_d/V1.2)》的电源Layout章节。
+
+
+
+### 7. GR533x不同的PCB板子使用参考设计匹配参数达不到GR533x SK板子功率或灵敏度，原因是什么？
+
+   * 导致用户实际匹配参数和参考匹配参数差异的因素包括：
+        * 《[GR533x Reference Design](https://www.goodix.com/zh/docview/GR533x Reference Design_V1.2?objectId=362&objectType=document&version=609)》中的匹配参数基于GR533x SK板调试。
+        * PCB叠层结构可能会影响RF走线的阻抗和寄生参数。
+        * 使用了与参考设计推荐BOM不同的RF射频器件。
+        * PCB结构限制导致Layout差异。
+
+   * 基于GR533x进行产品设计时，建议先参考《[GR533x Reference Design](https://www.goodix.com/zh/docview/GR533x Reference Design_V1.2?objectId=362&objectType=document&version=609)》中的推荐匹配器件贴片，然后根据实际产品的PCB叠层和布局，对匹配参数进行微调。详细的匹配调试指南请参考《[GR533x RF匹配调试指南](https://docs.goodix.com/zh/online/rf_matching_bl_d/V1.0)》。
 
 
 
